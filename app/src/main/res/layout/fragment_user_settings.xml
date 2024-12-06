@@ -17,7 +17,8 @@
             android:id="@+id/username_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter Username"
+            android:hint="@string/enter_username"
+            android:autofillHints="username"
             android:textColor="@color/white"
             android:textColorHint="@color/white"
             android:inputType="text"
@@ -28,7 +29,8 @@
             android:id="@+id/email_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter Email Address"
+            android:hint="@string/enter_email"
+            android:autofillHints="emailAddress"
             android:textColor="@color/white"
             android:textColorHint="@color/white"
             android:inputType="textEmailAddress"
@@ -39,7 +41,8 @@
             android:id="@+id/password_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter Password"
+            android:hint="@string/enter_password"
+            android:autofillHints="password"
             android:textColor="@color/white"
             android:textColorHint="@color/white"
             android:inputType="textPassword"
@@ -49,7 +52,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Theme Color"
+            android:text="@string/theme_color"
             android:textColor="@color/white"
             android:textStyle="bold"
             android:textSize="16sp"
@@ -62,20 +65,21 @@
             android:backgroundTint="@color/white"
             android:layout_marginBottom="20dp"/>
 
-        <Switch
-            android:id="@+id/notifications_switch"
+        <CheckBox
+            android:id="@+id/notifications_checkbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Enable Push Notifications"
+            android:text="@string/enable_notifications"
             android:textColor="@color/white"
             android:textSize="16sp"
+            android:buttonTint="@color/white"
             android:layout_marginBottom="24dp"/>
 
         <Button
             android:id="@+id/save_settings_button"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:text="SAVE SETTINGS"
+            android:text="@string/save_settings"
             android:textStyle="bold"/>
 
     </LinearLayout>
