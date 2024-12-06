@@ -16,6 +16,14 @@ class UserSettings extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+
+        
+
+
+
+
         return inflater.inflate(R.layout.fragment_user_settings, container, false);
+
+
     }
 }
