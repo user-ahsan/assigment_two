@@ -10,55 +10,52 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 public class ProfileView extends Fragment {
-    // Declare our TextViews
-    private TextView usernameText;
-    private TextView emailText;
-    private TextView themeText;
-    private TextView notificationsText;
+    TextView usernameText;
+    TextView emailText; 
+    TextView themeText;
+    TextView notificationsText;
     
-    // For reading saved data
-    private SharedPreferences sharedPreferences;
+    SharedPreferences savedData;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-        // Inflate the layout
-        View view = inflater.inflate(R.layout.fragment_profile_view, container, false);
+        View screen = inflater.inflate(R.layout.fragment_profile_view, container, false);
         
-        // Initialize SharedPreferences
-        sharedPreferences = requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        savedData = getActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
         
-        // Find all our TextViews
-        usernameText = view.findViewById(R.id.username_text);
-        emailText = view.findViewById(R.id.email_text);
-        themeText = view.findViewById(R.id.theme_text);
-        notificationsText = view.findViewById(R.id.notifications_text);
+        usernameText = screen.findViewById(R.id.username_text);
+        emailText = screen.findViewById(R.id.email_text);
+        themeText = screen.findViewById(R.id.theme_text);
+        notificationsText = screen.findViewById(R.id.notifications_text);
 
-        // Load and display the settings
-        updateProfile();
+        showUserInfo();
         
-        return view;
+        return screen;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        // Update the display whenever the fragment becomes visible
-        updateProfile();
+        showUserInfo();
     }
 
-    private void updateProfile() {
-        // Get the saved values with default values if none exist
-        String username = sharedPreferences.getString("username", getString(R.string.not_set));
-        String email = sharedPreferences.getString("email", getString(R.string.not_set));
-        String theme = sharedPreferences.getString("theme_name", getString(R.string.not_set));
-        boolean notifications = sharedPreferences.getBoolean("notifications", false);
+    private void showUserInfo() {
+        String name = savedData.getString("username", getString(R.string.not_set));
+        String email = savedData.getString("email", getString(R.string.not_set));
+        String theme = savedData.getString("theme_name", getString(R.string.not_set));
+        boolean notifications = savedData.getBoolean("notifications", false);
 
-        // Update the TextViews using string formatting
-        usernameText.setText(getString(R.string.username_format, username));
+        usernameText.setText(getString(R.string.username_format, name));
         emailText.setText(getString(R.string.email_format, email));
         themeText.setText(getString(R.string.theme_format, theme));
-        notificationsText.setText(getString(R.string.notifications_format, 
-            notifications ? getString(R.string.enabled) : getString(R.string.disabled)));
+        
+        String notifStatus;
+        if(notifications) {
+            notifStatus = getString(R.string.enabled);
+        } else {
+            notifStatus = getString(R.string.disabled);
+        }
+        notificationsText.setText(getString(R.string.notifications_format, notifStatus));
     }
 }

@@ -12,99 +12,82 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import androidx.fragment.app.Fragment;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 public class UserSettings extends Fragment {
-    // Declare our UI elements
-    private EditText usernameInput;
-    private EditText emailInput;
-    private EditText passwordInput;
-    private Spinner themeSpinner;
-    private CheckBox notificationsCheckbox;
-    private Button saveButton;
+    EditText usernameInput;
+    EditText emailInput; 
+    EditText passwordInput;
+    Spinner themeSpinner;
+    CheckBox notificationsCheckbox;
+    Button saveButton;
     
-    // For saving data
-    private SharedPreferences sharedPreferences;
+    SharedPreferences savedData;
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                            @Nullable ViewGroup container,
-                            @Nullable Bundle savedInstanceState) {
-        // Inflate the layout
-        View view = inflater.inflate(R.layout.fragment_user_settings, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View screen = inflater.inflate(R.layout.fragment_user_settings, container, false);
         
-        // Initialize SharedPreferences
-        sharedPreferences = requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        savedData = getActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
         
-        // Find all our views
-        usernameInput = view.findViewById(R.id.username_input);
-        emailInput = view.findViewById(R.id.email_input);
-        passwordInput = view.findViewById(R.id.password_input);
-        themeSpinner = view.findViewById(R.id.theme_spinner);
-        notificationsCheckbox = view.findViewById(R.id.notifications_checkbox);
-        saveButton = view.findViewById(R.id.save_settings_button);
+        usernameInput = screen.findViewById(R.id.username_input);
+        emailInput = screen.findViewById(R.id.email_input);
+        passwordInput = screen.findViewById(R.id.password_input);
+        themeSpinner = screen.findViewById(R.id.theme_spinner);
+        notificationsCheckbox = screen.findViewById(R.id.notifications_checkbox);
+        saveButton = screen.findViewById(R.id.save_settings_button);
 
-        // Set up the theme spinner with themes from resources
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireContext(),
+        ArrayAdapter<CharSequence> spinnerChoices = ArrayAdapter.createFromResource(getActivity(),
                 R.array.theme_options,
                 android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        themeSpinner.setAdapter(adapter);
+        spinnerChoices.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        themeSpinner.setAdapter(spinnerChoices);
 
-        // Load any saved settings
-        loadSavedSettings();
+        loadOldSettings();
 
-        // Set up save button click listener
-        saveButton.setOnClickListener(v -> saveSettings());
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveNewSettings();
+            }
+        });
 
-        return view;
+        return screen;
     }
 
-    private void loadSavedSettings() {
-        // Get saved values with default values if none exist
-        String username = sharedPreferences.getString("username", "");
-        String email = sharedPreferences.getString("email", "");
-        String password = sharedPreferences.getString("password", "");
-        int themePosition = sharedPreferences.getInt("theme_position", 0);
-        boolean notifications = sharedPreferences.getBoolean("notifications", false);
+    private void loadOldSettings() {
+        String name = savedData.getString("username", "");
+        String email = savedData.getString("email", "");
+        String password = savedData.getString("password", "");
+        int themeChoice = savedData.getInt("theme_position", 0);
+        boolean notifications = savedData.getBoolean("notifications", false);
 
-        // Set the values to our UI elements
-        usernameInput.setText(username);
+        usernameInput.setText(name);
         emailInput.setText(email);
         passwordInput.setText(password);
-        themeSpinner.setSelection(themePosition);
+        themeSpinner.setSelection(themeChoice);
         notificationsCheckbox.setChecked(notifications);
     }
 
-    private void saveSettings() {
-        // Get the values from our UI elements
-        String username = usernameInput.getText().toString();
+    private void saveNewSettings() {
+        String name = usernameInput.getText().toString();
         String email = emailInput.getText().toString();
         String password = passwordInput.getText().toString();
-        int themePosition = themeSpinner.getSelectedItemPosition();
-        boolean notifications = notificationsCheckbox.isChecked();
-
-        // Simple validation
-        if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(requireContext(), getString(R.string.fill_fields_error), Toast.LENGTH_SHORT).show();
+        
+        if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(getActivity(), "Please fill all fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Create editor as a local variable instead of a field
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("username", username);
+        SharedPreferences.Editor editor = savedData.edit();
+        editor.putString("username", name);
         editor.putString("email", email);
         editor.putString("password", password);
-        editor.putInt("theme_position", themePosition);
+        editor.putInt("theme_position", themeSpinner.getSelectedItemPosition());
         editor.putString("theme_name", themeSpinner.getSelectedItem().toString());
-        editor.putBoolean("notifications", notifications);
+        editor.putBoolean("notifications", notificationsCheckbox.isChecked());
         editor.apply();
 
-        // Show success message
-        Toast.makeText(requireContext(), getString(R.string.settings_saved), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "Settings saved!", Toast.LENGTH_SHORT).show();
     }
 }
