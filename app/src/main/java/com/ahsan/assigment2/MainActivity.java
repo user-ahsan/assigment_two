@@ -2,23 +2,52 @@ package com.ahsan.assigment2;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 public class MainActivity extends AppCompatActivity {
+    private Button settingsButton;
+    private Button profileButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Call parent class constructor first
         super.onCreate(savedInstanceState);
-        
-        // Set the layout file to show
         setContentView(R.layout.activity_main);
+
+        settingsButton = findViewById(R.id.settings_button);
+        profileButton = findViewById(R.id.profile_button);
+
+        settingsButton.setOnClickListener(v -> {
+            loadFragment(new UserSettings());
+            settingsButton.setEnabled(false);
+            profileButton.setEnabled(true);
+        });
+
+        profileButton.setOnClickListener(v -> {
+            loadFragment(new ProfileView());
+            profileButton.setEnabled(false);
+            settingsButton.setEnabled(true);
+        });
+
+        if (savedInstanceState == null) {
+            loadFragment(new UserSettings());
+            settingsButton.setEnabled(false);
+        }
+    }
+
+    private void loadFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
         
-        // Find the main layout view
-        View mainView = findViewById(R.id.main);
-        
-        // Add some padding around the edges
-        int padding = 16; // pixels of padding
-        mainView.setPadding(padding, padding, padding, padding);
+        transaction.setCustomAnimations(
+            android.R.anim.fade_in,
+            android.R.anim.fade_out
+        );
+
+        transaction.replace(R.id.fragment_container, fragment);
+        transaction.commit();
     }
 }
