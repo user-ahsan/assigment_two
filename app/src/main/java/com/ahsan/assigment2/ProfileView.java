@@ -1,6 +1,5 @@
 package com.ahsan.assigment2;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,52 +9,40 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 public class ProfileView extends Fragment {
-    TextView usernameText;
-    TextView emailText; 
-    TextView themeText;
-    TextView notificationsText;
-    
-    SharedPreferences savedData;
+    TextView username, email, theme, notifications;
+    SharedPreferences data;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                           Bundle savedInstanceState) {
-        View screen = inflater.inflate(R.layout.fragment_profile_view, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_profile_view, container, false);
         
-        savedData = getActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        username = view.findViewById(R.id.username_text);
+        email = view.findViewById(R.id.email_text);
+        theme = view.findViewById(R.id.theme_text);
+        notifications = view.findViewById(R.id.notifications_text);
         
-        usernameText = screen.findViewById(R.id.username_text);
-        emailText = screen.findViewById(R.id.email_text);
-        themeText = screen.findViewById(R.id.theme_text);
-        notificationsText = screen.findViewById(R.id.notifications_text);
-
-        showUserInfo();
+        data = getActivity().getSharedPreferences("UserPrefs", 0);
         
-        return screen;
+        showInfo();
+        
+        return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        showUserInfo();
+        showInfo();
     }
 
-    private void showUserInfo() {
-        String name = savedData.getString("username", getString(R.string.not_set));
-        String email = savedData.getString("email", getString(R.string.not_set));
-        String theme = savedData.getString("theme_name", getString(R.string.not_set));
-        boolean notifications = savedData.getBoolean("notifications", false);
+    void showInfo() {
+        String name = data.getString("username", "Not set");
+        String mail = data.getString("email", "Not set");
+        String themeChoice = data.getString("theme_name", "Default");
+        boolean notifs = data.getBoolean("notifications", false);
 
-        usernameText.setText(getString(R.string.username_format, name));
-        emailText.setText(getString(R.string.email_format, email));
-        themeText.setText(getString(R.string.theme_format, theme));
-        
-        String notifStatus;
-        if(notifications) {
-            notifStatus = getString(R.string.enabled);
-        } else {
-            notifStatus = getString(R.string.disabled);
-        }
-        notificationsText.setText(getString(R.string.notifications_format, notifStatus));
+        username.setText("Username: " + name);
+        email.setText("Email: " + mail);
+        theme.setText("Theme: " + themeChoice);
+        notifications.setText("Notifications: " + (notifs ? "On" : "Off"));
     }
 }
